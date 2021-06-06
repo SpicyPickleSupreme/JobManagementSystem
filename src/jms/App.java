@@ -1,10 +1,10 @@
 package jms;
 
 import jms.enums.JobCode;
-import jms.job.CommandJob;
-import jms.job.Job;
-import jms.job.WaitForFileEvent;
+import jms.system.Job;
 import jms.system.JobManagementService;
+import jms.system.jobs.CommandJob;
+import jms.system.jobs.WaitForFileEvent;
 
 /**
  * Simple example application on using the JMS.

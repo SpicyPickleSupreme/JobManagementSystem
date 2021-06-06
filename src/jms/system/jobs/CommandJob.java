@@ -1,7 +1,8 @@
-package jms.job;
+package jms.system.jobs;
 
 import jms.enums.JobCode;
 import jms.enums.JobState;
+import jms.system.Job;
 import jms.util.Command;
 
 /**
@@ -36,7 +37,7 @@ public class CommandJob extends Job {
 	 * Executes the given command and return a code to state whether job was success or failure.
 	 */
 	@Override
-	public int execute() {
+	protected int execute() {
 		try {
 			super.setJobState(JobState.RUNNING);
 			

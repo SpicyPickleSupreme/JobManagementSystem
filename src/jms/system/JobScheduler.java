@@ -4,7 +4,6 @@ package jms.system;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import jms.enums.JobState;
-import jms.job.Job;
 
 /**
  * This class is used to schedule jobs in a priority based queue.

@@ -1,4 +1,4 @@
-package jms.job;
+package jms.system;
 
 import jms.enums.JobState;
 
@@ -39,13 +39,13 @@ public abstract class Job {
 	 * Abstract method execute allows for the creation of different type of jobs apart from generic jobs.
 	 * @return Integer - result of execution
 	 */
-	public abstract int execute();
+	protected abstract int execute();
 	
 	/**
 	 * Set the job state.
 	 * @param state
 	 */
-	public void setJobState(JobState state) {
+	protected void setJobState(JobState state) {
 		this.jobState = state;
 	}
 	
@@ -68,7 +68,7 @@ public abstract class Job {
 	/**
 	 * Set the job result code
 	 */
-	public void setJobResultCode(int jobCode) {
+	protected void setJobResultCode(int jobCode) {
 		this.jobResultCode = jobCode;
 	}
 	
@@ -84,7 +84,7 @@ public abstract class Job {
 	 * Set the priority of the current job.
 	 * @param priority - job priority
 	 */
-	public void setPriority(int priority) {
+	protected void setPriority(int priority) {
 		this.priority = priority;
 	}
 	
@@ -92,7 +92,7 @@ public abstract class Job {
 	 * Set the time in milliseconds to allow for scheduling
 	 * @param time - milliseconds
 	 */
-	public void setScheduledTime(long time) {
+	protected void setScheduledTime(long time) {
 		this.scheduledTime = time;
 	}
 	

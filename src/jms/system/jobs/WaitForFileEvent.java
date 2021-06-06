@@ -1,8 +1,9 @@
-package jms.job;
+package jms.system.jobs;
 
 import java.io.File;
 
 import jms.enums.JobCode;
+import jms.system.Job;
 
 
 /**
@@ -53,7 +54,7 @@ public class WaitForFileEvent extends Job {
 	 * 
 	 */
 	@Override
-	public int execute() {
+	protected int execute() {
 		try {
 			File file = new File(fileName);
 			long startTime = System.currentTimeMillis();

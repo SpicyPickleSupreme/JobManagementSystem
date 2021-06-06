@@ -12,10 +12,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import jms.enums.JobCode;
 import jms.enums.JobState;
-import jms.job.CommandJob;
-import jms.job.Job;
-import jms.job.WaitForFileEvent;
+import jms.system.Job;
 import jms.system.JobManagementService;
+import jms.system.jobs.CommandJob;
+import jms.system.jobs.WaitForFileEvent;
 
 /**
  * Purpose of class is used to test the JMS.

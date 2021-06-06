@@ -6,7 +6,6 @@ import java.util.concurrent.Executors;
 import jms.config.Configuration;
 import jms.enums.JobCode;
 import jms.enums.JobState;
-import jms.job.Job;
 
 public class JobExecutor {
 	

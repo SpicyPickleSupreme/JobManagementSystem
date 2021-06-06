@@ -1,7 +1,5 @@
 package jms.system;
 
-import jms.job.Job;
-
 /**
  * Job Management Service
  * 
