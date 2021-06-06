@@ -3,10 +3,6 @@ package jms.system;
 
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import jms.config.Configuration;
 import jms.enums.JobState;
 import jms.job.Job;
 
@@ -32,7 +28,7 @@ public class JobScheduler implements Runnable {
 	 * If scheduled times are similar the priority queue will take into account which job has the higher priority
 	 * to schedule.
 	 */
-	public JobScheduler() {
+	protected JobScheduler() {
 		jobExecutor = new JobExecutor();
 		
 		
@@ -62,17 +58,20 @@ public class JobScheduler implements Runnable {
 	 * @param job Job to execute
 	 * @param time - time in milliseconds(Assumes user provides epoch date)
 	 */
-	public synchronized void scheduleJob(Job job, long time) {
+	protected synchronized void scheduleJob(Job job, long time) {
 		
 		if(job == null) return;
 		if(jobs.contains(job)) return;
+		
+		job.setJobState(JobState.QUEUED);
 		
 		if(time <= 0) {
 			jobExecutor.executeJobAsync(job);
 			return;
 		}
+		
 		job.setScheduledTime(time);
-		job.setJobState(JobState.QUEUED);
+		
 		jobs.add(job);
 		
 		synchronized(jobLock) {
@@ -85,7 +84,7 @@ public class JobScheduler implements Runnable {
 	/**
 	 * Starts Job Scheduler
 	 */
-	public void start() {
+	protected void start() {
 		if(thread == null) {
 			thread = new Thread(this);
 			thread.setDaemon(true);
@@ -111,8 +110,10 @@ public class JobScheduler implements Runnable {
 						}
 					}else {		
 						Job next = jobs.peek();
-						if(next.shouldExecute())
-							jobExecutor.executeJobAsync(jobs.poll());
+						if(next.shouldExecute()) {
+							jobExecutor.executeJobAsync(next);
+							jobs.remove(next);
+						}
 					}
 				}
 
@@ -161,11 +162,16 @@ public class JobScheduler implements Runnable {
 		return isRunning;
 	}
 	
+	protected boolean unqueueJob(Job job) {
+		return jobs.remove(job);
+	}
+	
 	/**
 	 * Sets isRunning to false
 	 */
-	public void stop() {
+	protected void stop() {
 		if(isRunning) {
+			this.jobExecutor.stop();
 			this.isRunning = false;
 			this.thread = null;
 		}

@@ -1,30 +1,51 @@
 package test;
 
 import java.io.File;
+
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import jms.config.Configuration;
+import org.junit.jupiter.api.TestMethodOrder;
+
 import jms.enums.JobCode;
 import jms.enums.JobState;
 import jms.job.CommandJob;
 import jms.job.Job;
 import jms.job.WaitForFileEvent;
+import jms.system.JobManagementService;
 import jms.system.JobScheduler;
-import jms.util.Time;
 
 /**
  * Purpose of class is used to test the JMS.
  * @author Caleb Bishop
  *
  */
+@TestMethodOrder(OrderAnnotation.class)
 class TestJMS {
 	
 
+	@BeforeAll
+	static void setup() {
+		JobManagementService.startAsync();
+	}
+	
+	@Test
+	@Order(1)
+	void testServiceStarted() {
+		assert(JobManagementService.isRunning);
+	}
+	
+	
 	/**
 	 * Test job priority is being handled correctly.
 	 */
 	@Test
+	@Order(2)
 	void testJobPriority() {
-		JobScheduler jobScheduler = new JobScheduler();
+		
 		Job jobOne = new CommandJob(()-> {
 			return JobCode.SUCCESS;
 		},5);
@@ -41,20 +62,20 @@ class TestJMS {
 			return JobCode.SUCCESS;
 		},25);
 		
-		long timeSchedule = System.currentTimeMillis() + 5000;
+		long timeSchedule = System.currentTimeMillis();
 		
-		jobScheduler.scheduleJob(jobTwo,timeSchedule);
-		jobScheduler.scheduleJob(jobOne,timeSchedule);
+		JobManagementService.scheduleJob(jobTwo,timeSchedule);
+		JobManagementService.scheduleJob(jobOne,timeSchedule);
 		
-		assert(!jobScheduler.jobQueueIsEmpty());
-		assert(jobScheduler.getQueue().peek() == jobOne);
+		assert(JobManagementService.getScheduledJobCount() != 0);
+		assert(JobManagementService.isJobScheduledNext(jobOne));
 		
-		jobScheduler.scheduleJob(jobFour,timeSchedule);
+		JobManagementService.scheduleJob(jobFour,timeSchedule);
 		
-		assert(jobScheduler.getQueue().peek() == jobOne);
+		assert(JobManagementService.isJobScheduledNext(jobOne));
 		
-		jobScheduler.scheduleJob(jobThree,timeSchedule);
-		assert(jobScheduler.getQueue().peek() == jobThree);		
+		JobManagementService.scheduleJob(jobThree,timeSchedule);
+		assert(JobManagementService.isJobScheduledNext(jobThree));		
 		
 	}
 	
@@ -62,8 +83,9 @@ class TestJMS {
 	 * Test that jobs are being scheduled accordingly to their time set to execute.
 	 */
 	@Test
+	@Order(3)
 	public void testTimeScheduleQueue() {
-		JobScheduler jobScheduler = new JobScheduler();
+		
 		Job jobOne = new CommandJob(()-> {
 			return JobCode.SUCCESS;
 		},5);
@@ -84,16 +106,16 @@ class TestJMS {
 		long timeSchedule = System.currentTimeMillis() + 5000;
 		
 		
-		jobScheduler.scheduleJob(jobTwo,timeSchedule + 10000);
-		assert(jobScheduler.getQueue().peek() == jobTwo);
-		jobScheduler.scheduleJob(jobThree,timeSchedule + 25000);
-		assert(jobScheduler.getQueue().peek() == jobTwo);
-		jobScheduler.scheduleJob(jobOne,timeSchedule + 5000);
-		assert(jobScheduler.getQueue().peek() == jobOne);
-		jobScheduler.scheduleJob(jobFour,timeSchedule + 30000);
-		assert(jobScheduler.getQueue().peek() == jobOne);
-		jobScheduler.getQueue().remove();
-		assert(jobScheduler.getQueue().peek() == jobTwo);
+		JobManagementService.scheduleJob(jobTwo,timeSchedule + 10000);
+		assert(JobManagementService.isJobScheduledNext(jobTwo));
+		JobManagementService.scheduleJob(jobThree,timeSchedule + 25000);
+		assert(JobManagementService.isJobScheduledNext(jobTwo));
+		JobManagementService.scheduleJob(jobOne,timeSchedule + 5000);
+		assert(JobManagementService.isJobScheduledNext(jobOne));
+		JobManagementService.scheduleJob(jobFour,timeSchedule + 30000);
+		assert(JobManagementService.isJobScheduledNext(jobOne));
+		assert(JobManagementService.unscheduleJob(jobOne));
+		assert(JobManagementService.isJobScheduledNext(jobTwo));
 	}
 	
 	/**
@@ -101,32 +123,32 @@ class TestJMS {
 	 * @throws InterruptedException
 	 */
 	@Test
+	@Order(4)
 	public void testJobState() throws InterruptedException {
-		JobScheduler jobScheduler = new JobScheduler();
+		
+		
 		Job jobOne = new CommandJob(()-> {
 			return JobCode.SUCCESS;
 		},5);
 		long timeSchedule = System.currentTimeMillis();
 		
 		assert(jobOne.getJobState() == null);
-		jobScheduler.scheduleJob(jobOne, timeSchedule + 1000);
-		jobScheduler.start();
+		JobManagementService.scheduleJob(jobOne, timeSchedule);
+		
 		
 		
 		assert(jobOne.getJobState() == JobState.QUEUED);
 		
 		JobState state = jobOne.getJobState();
 		while((state = jobOne.getJobState()) != JobState.RUNNING) {
-			Thread.sleep(0);
+			
 		}
 		assert(state == JobState.RUNNING);
 		
 		Thread.sleep(1500);
 		assert(jobOne.getJobState() == JobState.SUCCESS);
 		
-		assert(jobScheduler.isRunning());
 		
-		jobScheduler.stop();
 	}
 	
 	
@@ -138,13 +160,13 @@ class TestJMS {
 	 * Creates a temp file for the event to wait upon before finishing.
 	 */
 	@Test
+	@Order(5)
 	public void testWaitForFileEventSuccess() {
 		WaitForFileEvent fileEvent = new WaitForFileEvent("testZandar123.txt");
 		try {
-			JobScheduler scheduler = new JobScheduler();
+			
 			long initTime =  System.currentTimeMillis() + 1000;
-			scheduler.scheduleJob(fileEvent,initTime);
-			scheduler.start();
+			JobManagementService.scheduleJob(fileEvent, initTime);
 			
 			Thread.sleep(1100);
 			File testFile = new File("testZandar123.txt");
@@ -153,8 +175,7 @@ class TestJMS {
 			assert(fileEvent.getJobState() == JobState.SUCCESS);
 			
 			testFile.delete();
-			 
-			scheduler.stop();
+			
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -167,21 +188,37 @@ class TestJMS {
 	 * and get the result accordingly
 	 */
 	@Test
+	@Order(6)
 	public void testWaitForFileEventTimeout() {
 		WaitForFileEvent fileEvent = new WaitForFileEvent("testZandar1234.txt",1000);
 		try {
-			JobScheduler scheduler = new JobScheduler();
-			long initTime =  System.currentTimeMillis() + 1000;
-			scheduler.scheduleJob(fileEvent,initTime);
-			scheduler.start();		
-			Thread.sleep(2500);
-			assert(fileEvent.getJobState() == JobState.FAILED); 
-			scheduler.stop();
 			
+			long initTime =  System.currentTimeMillis() + 1000;
+			JobManagementService.scheduleJob(fileEvent, initTime);	
+			Thread.sleep(2500);
+			assert(fileEvent.getJobState() == JobState.FAILED); 	
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	@Order(7)
+	void testServiceStopped() {
+		JobManagementService.stop();
+		assert(!JobManagementService.isRunning);
+	}
+	
+	@AfterAll
+	static void after() {
+		JobManagementService.stop();
+	}
+	
+	
+	
+	
+	
+	
 
 }

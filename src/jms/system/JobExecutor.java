@@ -3,6 +3,7 @@ package jms.system;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import jms.config.Configuration;
 import jms.enums.JobCode;
 import jms.enums.JobState;
 import jms.job.Job;
@@ -11,27 +12,27 @@ public class JobExecutor {
 	
 	ExecutorService executorService;
 	
-	public JobExecutor() {
-		executorService = Executors.newFixedThreadPool(5);
+	/**
+	 * Constructor
+	 */
+	protected JobExecutor() {
+		executorService = Executors.newFixedThreadPool(Configuration.ExecutorThreadPoolAmount);
 	}
 	
 	/**
 	 * Runs the job, checks to see if the job state has finished, if not proceed.
-	 * @param job
+	 * @param job to be executed
 	 */
-	public void executeJob(Job job) {
+	protected void executeJob(Job job) {
 		int jobResult;
 		
 		JobState jobState = job.getJobState();
-		if(jobState == JobState.FAILED || jobState == JobState.SUCCESS) return;
+		if(jobState != JobState.QUEUED) return;
 		try {
 			
 			
 			job.setJobState(JobState.RUNNING);
-			
-			
 			jobResult = job.execute();
-
 			job.setJobResultCode(jobResult);
 			job.setJobState(jobResult >= JobCode.SUCCESS ? JobState.SUCCESS : JobState.FAILED);
 			
@@ -46,17 +47,29 @@ public class JobExecutor {
 	 * that need to execute.
 	 * @param job
 	 */
-	public void executeJobAsync(Job job) {
+	protected void executeJobAsync(Job job) {
 		executorService.submit(()->{
 			executeJob(job);
 		});
 	}
 	
-	public void executeJobAsync(Job job, Runnable onFinish) {
+	/**
+	 * Executes job async, can be given a runnable to execute upon finish
+	 * @param job - to be executed
+	 * @param onFinish - run operation on finish
+	 */
+	protected void executeJobAsync(Job job, Runnable onFinish) {
 		executorService.submit(()->{
 			executeJob(job);
 			onFinish.run();
 		});
+	}
+	
+	/**
+	 * Stops the job executor
+	 */
+	protected void stop() {
+		executorService.shutdown();
 	}
 	
 

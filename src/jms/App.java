@@ -8,15 +8,19 @@ import jms.system.JobManagementService;
 
 /**
  * Simple example application on using the JMS.
+ * Runs until killed.
  * @author Caleb Bishop
  *
  */
 public class App {
 
+	/**
+	 * Starts the JMS
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		
-		
-		JobManagementService.start();
+		Runtime runtime = Runtime.getRuntime();
 		
 		Job printHelloWorld = new CommandJob(()->{
 			System.out.println("Hello World");
@@ -24,21 +28,18 @@ public class App {
 		},10);
 		
 		Job waitForFile = new WaitForFileEvent("WheresMyFile.txt",15,5000);
-		
 		long scheduleFor = System.currentTimeMillis() + 1000;
 		
 		JobManagementService.scheduleJob(waitForFile, scheduleFor);
 		JobManagementService.scheduleJob(printHelloWorld, scheduleFor);
 		
 		
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally {
+		runtime.addShutdownHook(new Thread(()->{
 			JobManagementService.stop();
-		}
+		}));
+		
+		
+		JobManagementService.start();
 		
 	}
 
