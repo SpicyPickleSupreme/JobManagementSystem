@@ -55,24 +55,19 @@ public class WaitForFileEvent extends Job {
 	@Override
 	public int execute() {
 		try {
-			super.setJobState(JobState.RUNNING);
 			File file = new File(fileName);
 			long startTime = System.currentTimeMillis();
 			while(!file.exists()) {
 				Thread.sleep(pollTime);
 				
 				if(System.currentTimeMillis() - startTime >= timeout) {
-					super.setJobState(JobState.FAILED);
 					return JobCode.ERROR_EVENT_WAITFORFILE;
 				}
 				
 			}
-			super.setJobState(JobState.SUCCESS);
-			System.out.println("File found:" + fileName);
 			return JobCode.SUCCESS_EVENT_WAITFORFILE;
 		}catch(Exception e) {
 			e.printStackTrace();
-			super.setJobState(JobState.FAILED);
 			return JobCode.ERROR_EVENT_WAITFORFILE;
 		}
 	}

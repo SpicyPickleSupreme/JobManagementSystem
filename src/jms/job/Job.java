@@ -66,7 +66,7 @@ public abstract class Job {
 	}
 	
 	/**
-	 * 
+	 * Set the job result code
 	 */
 	public void setJobResultCode(int jobCode) {
 		this.jobResultCode = jobCode;
@@ -109,10 +109,13 @@ public abstract class Job {
 	 * @return true if ready to be executed, false otherwise
 	 */
 	public boolean shouldExecute() {
-		long timeTillExecute = this.scheduledTime - System.currentTimeMillis();
-		return timeTillExecute <= 0 ? true : false;
+		return getTimeTillExecute() <= 0 ? true : false;
 	}
 	
+	/**
+	 * Gets the time till job execution
+	 * @return time till job execution.
+	 */
 	public long getTimeTillExecute() {
 		return this.scheduledTime - System.currentTimeMillis();
 	}

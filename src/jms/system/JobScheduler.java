@@ -24,7 +24,6 @@ public class JobScheduler implements Runnable {
 	private Object jobLock = new Object();
 	private boolean isRunning = false;
 	private int pollTime = 500;
-	private ExecutorService executorService;
 	private JobExecutor jobExecutor;
 	
 	/**
@@ -34,7 +33,6 @@ public class JobScheduler implements Runnable {
 	 * to schedule.
 	 */
 	public JobScheduler() {
-		executorService = Executors.newFixedThreadPool(Configuration.SchedulerThreadPoolAmount);
 		jobExecutor = new JobExecutor();
 		
 		
@@ -114,9 +112,7 @@ public class JobScheduler implements Runnable {
 					}else {		
 						Job next = jobs.peek();
 						if(next.shouldExecute())
-							jobExecutor.executeJobAsync(jobs.poll(),()->{
-								System.out.println("Job Finished : " + next.getJobState());
-							});
+							jobExecutor.executeJobAsync(jobs.poll());
 					}
 				}
 
@@ -170,7 +166,6 @@ public class JobScheduler implements Runnable {
 	 */
 	public void stop() {
 		if(isRunning) {
-			this.executorService.shutdownNow();
 			this.isRunning = false;
 			this.thread = null;
 		}
