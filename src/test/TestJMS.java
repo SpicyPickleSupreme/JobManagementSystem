@@ -16,7 +16,6 @@ import jms.job.CommandJob;
 import jms.job.Job;
 import jms.job.WaitForFileEvent;
 import jms.system.JobManagementService;
-import jms.system.JobScheduler;
 
 /**
  * Purpose of class is used to test the JMS.

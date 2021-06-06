@@ -3,7 +3,7 @@ package jms.job;
 import java.io.File;
 
 import jms.enums.JobCode;
-import jms.enums.JobState;
+
 
 /**
  * Simple event/job used to wait for a file provided the path/filename
