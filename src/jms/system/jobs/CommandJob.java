@@ -38,14 +38,8 @@ public class CommandJob extends Job {
 	 */
 	@Override
 	protected int execute() {
-		try {
-			super.setJobState(JobState.RUNNING);
-			
-			int result = this.command.execute();
-			
-			super.setJobState(result >= JobCode.SUCCESS ? JobState.SUCCESS : JobState.FAILED);
-			
-			return result;
+		try {			
+			return this.command.execute();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return JobCode.ERROR;
