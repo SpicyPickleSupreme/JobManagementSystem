@@ -8,7 +8,7 @@ package jms.system;
  * 
  * Used for handling the job scheduler, 
  * for executing and scheduling jobs
- * @author Caleb Bishop
+ * @author Caleb
  *
  */
 public class JobManagementService {

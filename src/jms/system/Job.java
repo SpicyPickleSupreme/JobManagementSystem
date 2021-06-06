@@ -6,7 +6,7 @@ import jms.enums.JobState;
 /**
  * The job class is used to create jobs to execute actions.
  * These jobs can be executed right away, or scheduled.
- * @author Caleb Bishop
+ * @author Caleb
  *
  */
 public abstract class Job {

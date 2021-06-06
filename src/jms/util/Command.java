@@ -3,7 +3,7 @@ package jms.util;
 
 /**
  * Command interface used to execute an action.
- * @author Caleb Bishop
+ * @author Caleb
  *
  */
 public interface Command {

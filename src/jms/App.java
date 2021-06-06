@@ -9,7 +9,7 @@ import jms.system.jobs.WaitForFileEvent;
 /**
  * Simple example application on using the JMS.
  * Runs until killed.
- * @author Caleb Bishop
+ * @author Caleb
  *
  */
 public class App {

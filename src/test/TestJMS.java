@@ -19,7 +19,7 @@ import jms.system.jobs.WaitForFileEvent;
 
 /**
  * Purpose of class is used to test the JMS.
- * @author Caleb Bishop
+ * @author Caleb
  *
  */
 @TestMethodOrder(OrderAnnotation.class)

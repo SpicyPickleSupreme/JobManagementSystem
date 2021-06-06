@@ -7,6 +7,11 @@ import jms.config.Configuration;
 import jms.enums.JobCode;
 import jms.enums.JobState;
 
+/**
+ * The purpose of this class is to handle job execution.
+ * @author Caleb
+ *
+ */
 public class JobExecutor {
 	
 	ExecutorService executorService;

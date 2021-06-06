@@ -9,7 +9,7 @@ import jms.enums.JobState;
  * This class is used to schedule jobs in a priority based queue.
  * This class assumes jobs are to be ran asynchronous in the event of a blocking job such as waiting for a file
  * so that other jobs that are scheduled are not blocked to be executed.
- * @author Caleb Bishop
+ * @author Caleb
  *
  */
 public class JobScheduler implements Runnable {

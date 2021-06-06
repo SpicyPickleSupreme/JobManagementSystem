@@ -2,7 +2,7 @@ package jms.enums;
 
 /**
  * To allow creation of different types of jobs and supporting codes
- * @author Caleb Bishop
+ * @author Caleb
  *
  */
 public class JobCode {
