@@ -2,13 +2,13 @@
 ## Simple Single Application Prototype
 
 The goal of this system is to handle the execution of multiple types of Jobs.
-## [Technical Paper](https://github.com/SpicyPickleSupreme/JobManagementSystem/blob/master/JMS.pdf)
+## [Technical Paper](https://github.com/kingbishop/JobManagementSystem/blob/master/JMS.pdf)
 
 ### Main Components
-- [Job](https://github.com/SpicyPickleSupreme/JobManagementSystem/blob/master/src/jms/system/Job.java)
-- [JobExecutor](https://github.com/SpicyPickleSupreme/JobManagementSystem/blob/master/src/jms/system/JobExecutor.java)
-- [JobScheduler](https://github.com/SpicyPickleSupreme/JobManagementSystem/blob/master/src/jms/system/JobScheduler.java)
-- [JobManagementService](https://github.com/SpicyPickleSupreme/JobManagementSystem/blob/master/src/jms/system/JobManagementService.java)
+- [Job](https://github.com/kingbishop/JobManagementSystem/blob/master/src/jms/system/Job.java)
+- [JobExecutor](https://github.com/kingbishop/JobManagementSystem/blob/master/src/jms/system/JobExecutor.java)
+- [JobScheduler](https://github.com/kingbishop/JobManagementSystem/blob/master/src/jms/system/JobScheduler.java)
+- [JobManagementService](https://github.com/kingbishop/JobManagementSystem/blob/master/src/jms/system/JobManagementService.java)
 
 ### Implementation
 
