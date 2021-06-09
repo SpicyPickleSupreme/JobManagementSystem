@@ -1,6 +1,5 @@
 package jms.system;
 
-
 import jms.enums.JobState;
 
 
@@ -12,9 +11,6 @@ import jms.enums.JobState;
  */
 public abstract class Job {
 
-	/**
-	 * 
-	 */
 	private int priority;
 	private JobState jobState;
 	private long scheduledTime;
